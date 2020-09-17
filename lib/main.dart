@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 void main() {
   runApp(MyApp());
 }
@@ -25,6 +27,31 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
+  final String url = "https://swapi.co/api/people";
+  List data;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // ignore: unnecessary_statements
+    this.getJsonData;
+  }
+  Future<String> getJsonData() async{
+    var response = await http.get(
+      // Encode the url
+        Uri.encodeFull(url),
+//        accept the JSON response
+        headers: {"Accept": "application/json"}
+    );
+
+
+    setState(() {
+      var convertDataToJson = Json.Decode(response.body);
+      data = convertDataToJson['results'];
+    });
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +59,7 @@ class _HomePageState extends State<HomePage> {
         title: Text('Retrieve data via HTTP Get'),
       ),
       body: ListView.builder(
-        itemCount: 1,
+        itemCount: data.length,
         itemBuilder: (BuildContext context, int index){
           return Container(
             child: Center(
